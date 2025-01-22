@@ -1,0 +1,38 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalLabel">Edit Product: {{ selected_product.name.capitalize() }}, {{ date_format("%d %b %Y", selected_product.t_date) }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form method="POST" action="{{ url_for('edit_product', id=selected_product.hist_id) }}" class="text-start gap-1" id="edit-form">
+            <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" class="form-control" id="modalname" name="name" required autocomplete="name" value="{{ selected_product.name }}">
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input name="category" class="form-control" list="datalistOptions" id="category" required value="{{ selected_product.category }}">
+                <datalist id="datalistOptions">
+                    {% for category in categories %}
+                        <option value="{{ category.name }}">
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" class="form-control" id="price" name="price" required step="0.01" min="0" placeholder="$0.00" value="{{ "{:,.2f}".format(selected_product.price) }}">
+            </div>
+            <div class="form-group">
+                <label for="date">Purchase Date</label>
+                <input type="date" class="form-control" id="date" name="date" required value="{{ date_format("%Y-%m-%d", selected_product.t_date) }}">
+            </div>
+            <div class="form-group mt-3 text-end">
+                <!-- delete button   -->
+                <a class="pe-2" href="{{ url_for('delete_product', id=selected_product.hist_id) }}" onclick="return confirm('Are you sure?')">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                </a>
+                <button type="submit" class="btn btn-primary" data-bs-target="#edit-form">Edit</button>
+            </div>
+        </form>
+    </div>
+</div>

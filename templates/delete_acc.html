@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <div class="mx-auto text-center"style="width: 300px;height: 100vh">
+        <div class="pt-4" style="height: 200px">
+            <h2 class="offcanvas-title"><a href="/">Product Tracker</a></h2>
+        </div>
+        <div>
+            <h4>Deleting account!</h4>
+            <p>Please confirm with your credentials</p>
+            <form action="{{ url_for('delete_user') }}" method="post" class="text-center" id="delete-form">
+                <div class="mb-3">
+                    <input autocomplete="off" class="form-control w-100" name="username" placeholder="Username" type="text" autofocus>
+                </div>
+                <div class="mb-3">
+                    <input autocomplete="off" class="form-control w-100 pwd" name="password" placeholder="Password" type="password">
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div><input type="checkbox" onclick="togglePwd()"> Show Password</div>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete account</button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <!-- <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete account</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div> -->
+                                <div class="modal-body">
+                                    <div class="my-4">
+                                        Are you sure? All your data will be lost!
+                                    </div>
+                                    <button type="submit" class="btn btn-primary mb-4" data-bs-target="delete-form">Delete account</button>
+                                </div>
+                                <!-- <div class="modal-footer">
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+	<script src="../static/script.js"></script>
+{% endblock %}

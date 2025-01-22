@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% block main %}
+	<div class="d-flex h-100 p-0 m-0">
+		<!-- spacer for responsiveness -->
+		<div class="offcanvas-sm" style="width:200px"></div>
+
+		<!-- sidebar -->
+		<nav class="offcanvas-sm offcanvas-start p-3 h-100 bg-info-subtle" style="width: 200px; position: fixed;" tabindex="-1" id="offcanvasResponsive" aria-labelledby="offcanvasResponsiveLabel">
+            <div class="offcanvas-body-sm" style="height: 60%">
+				<h2 class="offcanvas-title mb-4 lh-1"><a href="/">Product Tracker</a></h2>
+				<form method="POST" action="{{ url_for('add_product')}}">
+					<div class="form-group mb-2">
+						<label for="name">Product Name</label>
+						<input type="text" class="form-control" id="name" name="name" required autocomplete="name">
+					</div>
+					<div class="form-group mb-2">
+						<label for="category">Category</label>
+						<input name="category" class="form-control" list="datalistOptions" id="category">
+						<datalist id="datalistOptions">
+							{% for category in categories %}
+								<option value="{{ category.name.capitalize() }}">
+							{% endfor %}
+						</select>
+					</div>
+					<div class="form-group mb-2">
+						<label for="price">Price</label>
+						<input type="number" class="form-control" id="price" name="price" required step="0.01" min="0" placeholder="$0.00">
+					</div>
+					<div class="form-group mb-2">
+						<label for="date">Purchase Date</label>
+						<input type="date" class="form-control" id="date" name="date" required>
+					</div>
+					<div class="form-group mb-3 pt-2 text-end">
+						<button type="submit" class="btn btn-primary">Add Product</button>
+					</div>
+				</form>
+				<hr style="color: #778DA9">
+				{% if get_flashed_messages() %}
+					<div class="alert alert-dark">{{ get_flashed_messages() | join(" ") }}</div>
+				{% endif %}
+			</div>
+			<div id="user-div" class="offcanvas-footer d-flex justify-content-center align-items-end dropup" style="height:40%">
+				<a class="text-muted dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer">{{ username }} </a>
+				<ul class="dropdown-menu dropdown-menu-dark">
+					<li><a class="dropdown-item" href="{{ url_for('change_pwd') }}">Change password</a></li>
+					<li><a class="dropdown-item" href="{{ url_for('delete_user') }}">Delete account</a></li>
+				</ul>
+
+				<a class="px-3" style="color: #778DA9">|</a>
+				<a href="/logout" style="color: #DC143C">Log Out</a>
+			</div>
+		</nav>
+
+		<!-- main div -->
+		<div class="text-center mx-auto pt-5">
+
+			<!-- button that toggles sidebar on small devices -->
+			<button class="btn d-sm-none position-absolute top-0 start-0 pt-3" style="width: 20px; height: 20px;" type="button" data-bs-toggle="offcanvas" data-bs-backdrop="false" data-bs-target="#offcanvasResponsive" aria-controls="offcanvasResponsive">
+				<span class="material-symbols-outlined position-relative top-0">menu</span>
+			</button>
+
+			<div id="main-content">
+				<!-- product details div -->
+				<div class="text-start pb-4" style="height: 250px; width: 335px;">
+					{% if selected_product %}
+						<h2 class="pb-4 text-center">Product Details</h2>
+						<h4>{{ selected_product.name.capitalize() }}</h3>
+						<p>Category: {{ selected_product.category.capitalize() }}</p>
+						<p>Price: {{ usd(selected_product.price) }}</p>
+						<p>Average Days Between Purchases: {{ avg_days }} days</p>
+					{% else %}
+						<div class="text-center">
+							<h2>Product Details</h2>
+							<p>Select a product to see details.</p>
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- history div -->
+				<div class="mt-4 mx-auto pb-4" style="width: 335px;">
+					<h4>Product History</h4>
+					<ul id="product-list" class="list-group">
+						{% if products %}
+							{% for product in products %}
+								<li class="bg-info-subtle d-flex list-group-item pb-2 pe-0">
+									<div class="w-100 text-start">
+										<a href="{{ url_for('product', id=product.hist_id) }}" class="text-body">
+											<div class="row">
+												<div class="col-auto text-info">Name: {{ product.name.capitalize() }}</div>
+												<div class="col text-end">{{ date_format("%m/%d/%Y", product.t_date) }}</div>
+											</div>
+											<div class="row">
+												<div class="col-auto">Category: {{ product.category.capitalize() }}</div>
+												<div class="col text-end">Price: {{ usd(product.price) }}</div>
+											</div>
+										</a>
+									</div>
+									<div>
+										<!-- edit button, opens modal -->
+										<button name="edit" value="{{ product.hist_id }}" class="btn p-2 pb-0 pt-2" data-bs-toggle="modal" data-bs-target="#modal" data-bs-name="{{ product.name.capitalize() }}">
+											<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/></svg>
+										</button>
+
+										<!-- Modal: https://getbootstrap.com/docs/5.3/components/modal/ -->
+										<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+											<div class="modal-dialog"></div>
+										</div>
+									</div>
+								</li>
+							{% endfor %}
+						{% else %}
+								<p>No Products</p>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+    </div>
+
+	<script src="../static/script.js"></script>
+{% endblock %}
+
